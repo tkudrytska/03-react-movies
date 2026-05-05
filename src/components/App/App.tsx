@@ -1,9 +1,13 @@
-import { useState } from 'react'
-import css from './App.module.css'
-import type { Movie } from '../../types/movie'
-import { fetchMovies } from '../../services/movieService'
-import SearchBar from '../SearchBar/SearchBar'
-import toast, { Toaster } from 'react-hot-toast'
+import { useState } from "react";
+import css from "./App.module.css";
+import type { Movie } from "../../types/movie";
+import { fetchMovies } from "../../services/movieService";
+import SearchBar from "../SearchBar/SearchBar";
+import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import MovieGrid from "../MovieGrid/MovieGrid";
+import Loader from "../Loader/Loader";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -14,7 +18,13 @@ function App() {
     try {
       setIsLoading(true);
       setIsError(false);
+
       const data = await fetchMovies(query);
+
+      if (data.length === 0) {
+        toast.error("No movies found for your request.");
+      }
+
       setMovies(data);
     } catch {
       setIsError(true);
@@ -25,13 +35,13 @@ function App() {
 
   return (
     <div className={css.app}>
-      <div><Toaster/></div>
+      <Toaster />
       <SearchBar onSubmit={handleSearch} />
-      {isLoading && <p>Loading data, please wait...</p>}
-      {isError && <p>Whoops, something went wrong! Please try again!</p>}
-      {movies.length > 0 ? <MovieGrid items={movies} /> : {toast.error("No movies found for your request.")}}
+      {isLoading && <Loader />}
+      {isError && <ErrorMessage/>}
+      {movies.length > 0 && <MovieGrid movies={movies} />}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
