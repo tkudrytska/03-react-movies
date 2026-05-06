@@ -15,8 +15,6 @@ const SearchBar = ({ onSubmit }: SearchBarProps) => {
   }
 
   onSubmit(value);
-  const form = document.querySelector("form");
-  form?.reset();
 };
 
   return (
